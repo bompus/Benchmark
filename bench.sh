@@ -60,7 +60,7 @@ UNIX_BENCH_DIR=UnixBench-$UNIX_BENCH_VERSION
 IOPING_VERSION=1.0
 IOPING_DIR=ioping-$IOPING_VERSION
 FIO_VERSION=2.2.1
-FIO_DIR=fio-$FIO_VERSION
+FIO_DIR=$FIO_VERSION
 
 # args: [name] [target dir] [filename] [url]
 function require_download() {
