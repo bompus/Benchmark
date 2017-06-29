@@ -1,43 +1,6 @@
 #!/bin/bash
-# Copyright (C) 2012 Crowd9 Pty Ltd
 
-usage ()
-{
-     echo >&2 "usage: bash $0 'john@example.com' 'MyBox' 'MyProvider.com' [\\\$20/mth]"
-}
-
-if [ $# -lt 3 ]
-then
-  usage
-  exit 1
-fi
-
-rm sb.sh
-
-HOST=$1
-PLAN=$2
-EMAIL=$3
-COST=$4
-PRIVATE=$5
-
-echo "
-###############################################################################
-#               ServerBear (http://serverbear.com) benchmarker                #
-###############################################################################
-
-This script will:
-  * Download and install packages to run UnixBench
-  * Download and run UnixBench
-  * Upload to ServerBear the UnixBench output and information about this computer
-
-This script has been tested on Ubuntu, Debian, and CentOs (6+).  Running it on other environments may not work correctly.
-
-To improve consistency, we recommend that you stop any services you may be running (e.g. web server, database, etc) to get the environment as close as possible to the original configuration.
-
-WARNING: You run this script entirely at your own risk.
-ServerBear accepts no responsibility for any damage this script may cause.
-
-Please review the code at https://github.com/Crowd9/Benchmark if you have any concerns"
+rm bench.sh
 
 echo "Checking for required dependencies"
 
@@ -98,7 +61,6 @@ IOPING_VERSION=0.6
 IOPING_DIR=ioping-$IOPING_VERSION
 FIO_VERSION=2.0.9
 FIO_DIR=fio-$FIO_VERSION
-UPLOAD_ENDPOINT='http://promozor.com/uploads.text'
 
 # args: [name] [target dir] [filename] [url]
 function require_download() {
@@ -108,9 +70,9 @@ function require_download() {
   fi
 }
 
-require_download FIO fio-$FIO_DIR https://github.com/Crowd9/Benchmark/raw/master/fio-$FIO_VERSION.tar.gz
-require_download IOPing $IOPING_DIR https://github.com/Crowd9/Benchmark/raw/master/ioping-$IOPING_VERSION.tar.gz
-require_download UnixBench $UNIX_BENCH_DIR https://github.com/Crowd9/Benchmark/raw/master/UnixBench$UNIX_BENCH_VERSION-patched.tgz
+require_download FIO fio-$FIO_DIR https://github.com/bompus/Benchmark/raw/master/fio-$FIO_VERSION.tar.gz
+require_download IOPing $IOPING_DIR https://github.com/bompus/Benchmark/raw/master/ioping-$IOPING_VERSION.tar.gz
+require_download UnixBench $UNIX_BENCH_DIR https://github.com/bompus/Benchmark/raw/master/UnixBench$UNIX_BENCH_VERSION-patched.tgz
 mv -f UnixBench $UNIX_BENCH_DIR 2>/dev/null
 
 cat > $FIO_DIR/reads.ini << EOF
@@ -152,7 +114,7 @@ readwrite=randwrite
 EOF
 
 if [ -e "~/.sb-pid" ] && ps -p $PID >&- ; then
-  echo "ServerBear job is already running (PID: $PID)"
+  echo "Benchmark job is already running (PID: $PID)"
   exit 0
 fi
 
@@ -165,7 +127,6 @@ echo "
 #             Installation(s) complete.  Benchmarks starting...               #
 #                                                                             #
 #  Running Benchmark as a background task. This can take several hours.       #
-#  ServerBear will email you when it's done.                                  #
 #  You can log out/Ctrl-C any time while this is happening                    #
 #  (it's running through nohup).                                              #
 #                                                                             #
@@ -252,11 +213,7 @@ cd $UNIX_BENCH_DIR
 ./Run -c 1 -c `grep -c processor /proc/cpuinfo` >> ../sb-output.log 2>&1
 cd ..
 
-RESPONSE=\`curl -s -F "upload[upload_type]=unix-bench-output" -F "upload[data]=<sb-output.log" -F "upload[key]=$EMAIL|$HOST|$PLAN|$COST" -F "private=$PRIVATE" $UPLOAD_ENDPOINT\`
-
-echo "Uploading results..."
-echo "Response: \$RESPONSE"
-echo "Completed! Your benchmark has been queued & will be delivered in a jiffy."
+echo "Completed! View sb-output.log for stats..."
 kill -15 \`ps -p \$\$ -o ppid=\` &> /dev/null
 rm -rf ../sb-bench
 rm -rf ~/.sb-pid
