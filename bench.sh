@@ -219,5 +219,3 @@ chmod u+x run-upload.sh
 nohup ./run-upload.sh >> sb-script.log 2>&1 & &> /dev/null
 
 echo $! > ~/.sb-pid
-
-tail -n 25 -F sb-script.log
