@@ -169,10 +169,9 @@ cd $UNIX_BENCH_DIR
 echo "End 1: `date`"
 
 function download_benchmark() {
-  echo "Benchmarking download from \$1 (\$2)"
-  DOWNLOAD_SPEED=\`wget -O /dev/null \$2 2>&1 | awk '/\\/dev\\/null/ {speed=\$3 \$4} END {gsub(/\\(|\\)/,"",speed); print speed}'\`
-  echo "Got \$DOWNLOAD_SPEED"
-  echo "Download \$1: \$DOWNLOAD_SPEED"
+  echo "Benchmarking download from $1 ($2)"
+  DOWNLOAD_SPEED=`wget -O /dev/null $2 2>&1 | grep '\([0-9.]\+ [KM]B/s\)' | sed -e 's|^.*(\([0-9.]\+ [KM]B/s\)).*$|\1|'`
+  echo "Download $1: $DOWNLOAD_SPEED"
 }
 
 echo "Running bandwidth benchmark..."
