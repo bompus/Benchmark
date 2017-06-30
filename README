@@ -10,4 +10,4 @@ WARNING: You run this script entirely at your own risk.
 Author and repository host accepts no responsibility for any damage this script may cause.
 
 To run:
-sudo wget -N https://raw.github.com/bompus/Benchmark/master/bench.sh && sudo bash bench.sh
+sudo wget -N https://raw.github.com/bompus/Benchmark/master/bench.sh && sudo bash bench.sh | tee sb-output.log
