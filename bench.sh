@@ -1,7 +1,5 @@
 #!/bin/bash
 
-rm bench.sh
-
 echo "Checking for required dependencies"
 
 function requires() {
@@ -118,61 +116,45 @@ if [ -e "~/.sb-pid" ] && ps -p $PID >&- ; then
   exit 0
 fi
 
-cat > run-upload.sh << EOF
-#!/bin/bash
-
-echo "
-###############################################################################
-#                                                                             #
-#             Installation(s) complete.  Benchmarks starting...               #
-#                                                                             #
-#  Running Benchmark as a background task. This can take several hours.       #
-#  You can log out/Ctrl-C any time while this is happening                    #
-#  (it's running through nohup).                                              #
-#                                                                             #
-###############################################################################
-"
->sb-output.log
-
 echo "Checking server stats..."
 echo "Distro:
-\`cat /etc/issue 2>&1\`
+\`cat /etc/issue\`
 CPU Info:
-\`cat /proc/cpuinfo 2>&1\`
+\`cat /proc/cpuinfo\`
 Disk space: 
-\`df --total 2>&1\`
+\`df --total\`
 Free: 
-\`free 2>&1\`" >> sb-output.log
+\`free\`"
 
 echo "Running dd I/O benchmark..."
 
-echo "dd 1Mx1k fdatasync: \`dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync 2>&1\`" >> sb-output.log
-echo "dd 64kx16k fdatasync: \`dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync 2>&1\`" >> sb-output.log
-echo "dd 1Mx1k dsync: \`dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync 2>&1\`" >> sb-output.log
-echo "dd 64kx16k dsync: \`dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync 2>&1\`" >> sb-output.log
+echo "dd 1Mx1k fdatasync: \`dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync\`"
+echo "dd 64kx16k fdatasync: \`dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync\`"
+echo "dd 1Mx1k dsync: \`dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync\`"
+echo "dd 64kx16k dsync: \`dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync\`"
 
 rm -f sb-io-test
 
 echo "Running IOPing I/O benchmark..."
 cd $IOPING_DIR
-make >> ../sb-output.log 2>&1
-echo "IOPing I/O: \`./ioping -c 10 . 2>&1 \`
-IOPing seek rate: \`./ioping -RD . 2>&1 \`
-IOPing sequential: \`./ioping -RL . 2>&1\`
-IOPing cached: \`./ioping -RC . 2>&1\`" >> ../sb-output.log
+make
+echo "IOPing I/O: \`./ioping -c 10 .\`
+IOPing seek rate: \`./ioping -RD .\`
+IOPing sequential: \`./ioping -RL .\`
+IOPing cached: \`./ioping -RC .\`"
 cd ..
 
 echo "Running FIO benchmark..."
 cd $FIO_DIR
-make >> ../sb-output.log 2>&1
+make
 
 echo "FIO random reads:
-\`./fio reads.ini 2>&1\`
-Done" >> ../sb-output.log
+\`./fio reads.ini\`
+Done"
 
 echo "FIO random writes:
-\`./fio writes.ini 2>&1\`
-Done" >> ../sb-output.log
+\`./fio writes.ini\`
+Done"
 
 rm sb-io-test 2>/dev/null
 cd ..
@@ -181,7 +163,7 @@ function download_benchmark() {
   echo "Benchmarking download from \$1 (\$2)"
   DOWNLOAD_SPEED=\`wget -O /dev/null \$2 2>&1 | awk '/\\/dev\\/null/ {speed=\$3 \$4} END {gsub(/\\(|\\)/,"",speed); print speed}'\`
   echo "Got \$DOWNLOAD_SPEED"
-  echo "Download \$1: \$DOWNLOAD_SPEED" >> sb-output.log 2>&1
+  echo "Download \$1: \$DOWNLOAD_SPEED"
 }
 
 echo "Running bandwidth benchmark..."
@@ -195,27 +177,18 @@ download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
 #download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
 
 echo "Running traceroute..."
-echo "Traceroute (cachefly.cachefly.net): \`traceroute cachefly.cachefly.net 2>&1\`" >> sb-output.log
+echo "Traceroute (cachefly.cachefly.net): \`traceroute cachefly.cachefly.net\`"
 
 echo "Running ping benchmark..."
-echo "Pings (cachefly.cachefly.net): \`ping -c 10 cachefly.cachefly.net 2>&1\`" >> sb-output.log
+echo "Pings (cachefly.cachefly.net): \`ping -c 10 cachefly.cachefly.net\`"
 
 echo "Running UnixBench benchmark..."
 cd $UNIX_BENCH_DIR
-./Run -c 1 -c `grep -c processor /proc/cpuinfo` >> ../sb-output.log 2>&1
+./Run -c 1 -c `grep -c processor /proc/cpuinfo`
 cd ..
 
-echo "Completed! View sb-output.log for stats..."
 kill -15 \`ps -p \$\$ -o ppid=\` &> /dev/null
 rm -rf ../sb-bench
 rm -rf ~/.sb-pid
 
-exit 0
-EOF
-
-chmod u+x run-upload.sh
-
->sb-script.log
-nohup ./run-upload.sh >> sb-script.log 2>&1 & &> /dev/null
-
-echo $! > ~/.sb-pid
+echo "Completed! View sb-output.log for stats..."
