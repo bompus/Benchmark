@@ -183,6 +183,7 @@ echo "Running ping benchmark..."
 echo "Pings (cachefly.cachefly.net): \`ping -c 10 cachefly.cachefly.net\`"
 
 echo "Running UnixBench benchmark..."
+pwd
 cd $UNIX_BENCH_DIR
 ./Run -c 1 -c `grep -c processor /proc/cpuinfo`
 cd ..
