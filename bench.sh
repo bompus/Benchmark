@@ -138,7 +138,7 @@ cd $IOPING_DIR
 make
 
 echo "---"
-echo "IOPing I/O: `./ioping -c 10 .`
+echo "IOPing I/O: `./ioping -c 10 .`"
 echo "IOPing seek rate: `./ioping -RD .`"
 echo "IOPing sequential: `./ioping -RL .`"
 echo "IOPing cached: `./ioping -RC .`"
@@ -149,8 +149,8 @@ cd $FIO_DIR
 make
 
 echo "---"
-echo "FIO random reads: `./fio reads.ini`
-echo "FIO random writes: `./fio writes.ini`
+echo "FIO random reads: `./fio reads.ini`"
+echo "FIO random writes: `./fio writes.ini`"
 echo "---"
 
 rm sb-io-test 2>/dev/null
