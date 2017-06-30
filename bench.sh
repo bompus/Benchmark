@@ -59,7 +59,7 @@ UNIX_BENCH_DIR=$DIR/UnixBench-$UNIX_BENCH_VERSION
 IOPING_VERSION=1.0
 IOPING_DIR=$DIR/ioping-$IOPING_VERSION
 FIO_VERSION=2.2.1
-FIO_DIR=$DIR/$FIO_VERSION
+FIO_DIR=$DIR/fio-$FIO_VERSION
 
 # args: [name] [target dir] [filename] [url]
 function require_download() {
@@ -118,21 +118,17 @@ if [ -e "~/.sb-pid" ] && ps -p $PID >&- ; then
 fi
 
 echo "Checking server stats..."
-echo "Distro:
-\`cat /etc/issue\`
-CPU Info:
-\`cat /proc/cpuinfo\`
-Disk space: 
-\`df --total\`
-Free: 
-\`free\`"
+echo "Distro: `cat /etc/issue\`"
+echo "CPU Info: `cat /proc/cpuinfo\`"
+echo "Disk space: `df --total`"
+echo "Free: `free`"
 
 echo "Running dd I/O benchmark..."
 
-echo "dd 1Mx1k fdatasync: \`dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync\`"
-echo "dd 64kx16k fdatasync: \`dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync\`"
-echo "dd 1Mx1k dsync: \`dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync\`"
-echo "dd 64kx16k dsync: \`dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync\`"
+echo "dd 1Mx1k fdatasync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync`"
+echo "dd 64kx16k fdatasync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync`"
+echo "dd 1Mx1k dsync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync`"
+echo "dd 64kx16k dsync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync`"
 
 rm -f sb-io-test
 
