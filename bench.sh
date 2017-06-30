@@ -52,13 +52,14 @@ if [ "$TO_INSTALL" != '' ]; then
   $SUDO $PACKAGE_MANAGER install -y $TO_INSTALL $MANAGER_OPTS
 fi
 
+DIR=`pwd`
 PID=`cat ~/.sb-pid 2>/dev/null`
 UNIX_BENCH_VERSION=5.1.3
-UNIX_BENCH_DIR=UnixBench-$UNIX_BENCH_VERSION
+UNIX_BENCH_DIR=$DIR/UnixBench-$UNIX_BENCH_VERSION
 IOPING_VERSION=1.0
-IOPING_DIR=ioping-$IOPING_VERSION
+IOPING_DIR=$DIR/ioping-$IOPING_VERSION
 FIO_VERSION=2.2.1
-FIO_DIR=$FIO_VERSION
+FIO_DIR=$DIR/$FIO_VERSION
 
 # args: [name] [target dir] [filename] [url]
 function require_download() {
@@ -142,7 +143,6 @@ echo "IOPing I/O: \`./ioping -c 10 .\`
 IOPing seek rate: \`./ioping -RD .\`
 IOPing sequential: \`./ioping -RL .\`
 IOPing cached: \`./ioping -RC .\`"
-cd ..
 
 echo "Running FIO benchmark..."
 cd $FIO_DIR
@@ -157,7 +157,7 @@ echo "FIO random writes:
 Done"
 
 rm sb-io-test 2>/dev/null
-cd ..
+cd $DIR
 
 function download_benchmark() {
   echo "Benchmarking download from \$1 (\$2)"
@@ -186,10 +186,10 @@ echo "Running UnixBench benchmark..."
 pwd
 cd $UNIX_BENCH_DIR
 ./Run -c 1 -c `grep -c processor /proc/cpuinfo`
-cd ..
+cd $DIR
 
 kill -15 \`ps -p \$\$ -o ppid=\` &> /dev/null
-rm -rf ../sb-bench
+rm -rf $DIR/sb-bench
 rm -rf ~/.sb-pid
 
 echo "Completed! View sb-output.log for stats..."
