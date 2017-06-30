@@ -59,7 +59,7 @@ UNIX_BENCH_DIR=$DIR/UnixBench-$UNIX_BENCH_VERSION
 IOPING_VERSION=1.0
 IOPING_DIR=$DIR/ioping-$IOPING_VERSION
 FIO_VERSION=2.2.1
-FIO_DIR=$DIR/fio-$FIO_VERSION
+FIO_DIR=$DIR/fio-fio-$FIO_VERSION
 
 # args: [name] [target dir] [filename] [url]
 function require_download() {
@@ -69,7 +69,7 @@ function require_download() {
   fi
 }
 
-require_download FIO $DIR https://codeload.github.com/axboe/fio/tar.gz/fio-$FIO_VERSION
+require_download FIO $FIO_DIR https://codeload.github.com/axboe/fio/tar.gz/fio-$FIO_VERSION
 require_download IOPing $IOPING_DIR https://codeload.github.com/koct9i/ioping/tar.gz/v$IOPING_VERSION
 require_download UnixBench $UNIX_BENCH_DIR https://github.com/bompus/Benchmark/raw/master/UnixBench$UNIX_BENCH_VERSION-patched.tgz
 mv -f UnixBench $UNIX_BENCH_DIR 2>/dev/null
