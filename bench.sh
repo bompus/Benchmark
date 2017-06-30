@@ -69,9 +69,7 @@ function require_download() {
   fi
 }
 
-echo $FIO_DIR
-
-require_download FIO $FIO_DIR https://codeload.github.com/axboe/fio/tar.gz/fio-$FIO_VERSION
+require_download FIO $DIR https://codeload.github.com/axboe/fio/tar.gz/fio-$FIO_VERSION
 require_download IOPing $IOPING_DIR https://codeload.github.com/koct9i/ioping/tar.gz/v$IOPING_VERSION
 require_download UnixBench $UNIX_BENCH_DIR https://github.com/bompus/Benchmark/raw/master/UnixBench$UNIX_BENCH_VERSION-patched.tgz
 mv -f UnixBench $UNIX_BENCH_DIR 2>/dev/null
