@@ -196,4 +196,4 @@ rm -rf $DIR/sb-bench
 rm -rf ~/.sb-pid
 
 echo "End 2: `date`"
-echo "Completed! View $DIR/sb-output.log for stats..."
+echo "Completed! Logs are at $DIR/sb_output_*.log ..."
