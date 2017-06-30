@@ -117,7 +117,14 @@ if [ -e "~/.sb-pid" ] && ps -p $PID >&- ; then
   exit 0
 fi
 
-echo "Start: `date`"
+echo "Builing IOPing..."
+cd $IOPING_DIR
+make
+
+echo "Building FIO..."
+cd $FIO_DIR
+make
+
 echo "Checking server stats..."
 echo "Distro: `cat /etc/issue`"
 echo "CPU Info: `cat /proc/cpuinfo`"
@@ -125,37 +132,41 @@ echo "Disk space: `df --total`"
 echo "Free: `free`"
 
 echo "---"
+echo "Start: `date`"
+echo "---"
+
 echo "Running dd I/O benchmark..."
 echo "dd 1Mx1k fdatasync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync`"
 echo "dd 64kx16k fdatasync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync`"
 echo "dd 1Mx1k dsync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync`"
 echo "dd 64kx16k dsync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync`"
-echo "---"
 
 rm -f sb-io-test
 
-echo "Running IOPing I/O benchmark..."
-cd $IOPING_DIR
-make
-
 echo "---"
+echo "Running IOPing..."
+cd $IOPING_DIR
 echo "IOPing I/O: `./ioping -c 10 .`"
 echo "IOPing seek rate: `./ioping -RD .`"
 echo "IOPing sequential: `./ioping -RL .`"
 echo "IOPing cached: `./ioping -RC .`"
 echo "---"
 
-echo "Running FIO benchmark..."
-cd $FIO_DIR
-make
-
 echo "---"
+echo "Running FIO..."
+cd $FIO_DIR
 echo "FIO random reads: `./fio reads.ini`"
 echo "FIO random writes: `./fio writes.ini`"
-echo "---"
 
 rm sb-io-test 2>/dev/null
 cd $DIR
+
+echo "---"
+echo "Running UnixBench benchmark..."
+cd $UNIX_BENCH_DIR
+./Run -c 1 -c `grep -c processor /proc/cpuinfo`
+
+echo "End 1: `date`"
 
 function download_benchmark() {
   echo "Benchmarking download from \$1 (\$2)"
@@ -165,6 +176,7 @@ function download_benchmark() {
 }
 
 echo "Running bandwidth benchmark..."
+cd $DIR
 
 download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
 #download_benchmark 'Linode, Atlanta, GA, USA' 'http://speedtest.atlanta.linode.com/100MB-atlanta.bin'
@@ -180,14 +192,9 @@ echo "Traceroute (cachefly.cachefly.net): `traceroute cachefly.cachefly.net`"
 echo "Running ping benchmark..."
 echo "Pings (cachefly.cachefly.net): `ping -c 10 cachefly.cachefly.net`"
 
-echo "Running UnixBench benchmark..."
-cd $UNIX_BENCH_DIR
-./Run -c 1 -c `grep -c processor /proc/cpuinfo`
-
-cd $DIR
 kill -15 \`ps -p \$\$ -o ppid=\` &> /dev/null
 rm -rf $DIR/sb-bench
 rm -rf ~/.sb-pid
 
-echo "End: `date`"
+echo "End 2: `date`"
 echo "Completed! View $DIR/sb-output.log for stats..."
