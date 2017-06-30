@@ -117,6 +117,7 @@ if [ -e "~/.sb-pid" ] && ps -p $PID >&- ; then
   exit 0
 fi
 
+echo "Start: `date`"
 echo "Checking server stats..."
 echo "Distro: `cat /etc/issue`"
 echo "CPU Info: `cat /proc/cpuinfo`"
@@ -188,4 +189,5 @@ kill -15 \`ps -p \$\$ -o ppid=\` &> /dev/null
 rm -rf $DIR/sb-bench
 rm -rf ~/.sb-pid
 
+echo "End: `date`"
 echo "Completed! View $DIR/sb-output.log for stats..."
