@@ -118,39 +118,40 @@ if [ -e "~/.sb-pid" ] && ps -p $PID >&- ; then
 fi
 
 echo "Checking server stats..."
-echo "Distro: `cat /etc/issue\`"
-echo "CPU Info: `cat /proc/cpuinfo\`"
+echo "Distro: `cat /etc/issue`"
+echo "CPU Info: `cat /proc/cpuinfo`"
 echo "Disk space: `df --total`"
 echo "Free: `free`"
 
+echo "---"
 echo "Running dd I/O benchmark..."
-
 echo "dd 1Mx1k fdatasync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync`"
 echo "dd 64kx16k fdatasync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync`"
 echo "dd 1Mx1k dsync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync`"
 echo "dd 64kx16k dsync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync`"
+echo "---"
 
 rm -f sb-io-test
 
 echo "Running IOPing I/O benchmark..."
 cd $IOPING_DIR
 make
-echo "IOPing I/O: \`./ioping -c 10 .\`
-IOPing seek rate: \`./ioping -RD .\`
-IOPing sequential: \`./ioping -RL .\`
-IOPing cached: \`./ioping -RC .\`"
+
+echo "---"
+echo "IOPing I/O: `./ioping -c 10 .`
+echo "IOPing seek rate: `./ioping -RD .`"
+echo "IOPing sequential: `./ioping -RL .`"
+echo "IOPing cached: `./ioping -RC .`"
+echo "---"
 
 echo "Running FIO benchmark..."
 cd $FIO_DIR
 make
 
-echo "FIO random reads:
-\`./fio reads.ini\`
-Done"
-
-echo "FIO random writes:
-\`./fio writes.ini\`
-Done"
+echo "---"
+echo "FIO random reads: `./fio reads.ini`
+echo "FIO random writes: `./fio writes.ini`
+echo "---"
 
 rm sb-io-test 2>/dev/null
 cd $DIR
@@ -173,19 +174,18 @@ download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
 #download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
 
 echo "Running traceroute..."
-echo "Traceroute (cachefly.cachefly.net): \`traceroute cachefly.cachefly.net\`"
+echo "Traceroute (cachefly.cachefly.net): `traceroute cachefly.cachefly.net`"
 
 echo "Running ping benchmark..."
-echo "Pings (cachefly.cachefly.net): \`ping -c 10 cachefly.cachefly.net\`"
+echo "Pings (cachefly.cachefly.net): `ping -c 10 cachefly.cachefly.net`"
 
 echo "Running UnixBench benchmark..."
-pwd
 cd $UNIX_BENCH_DIR
 ./Run -c 1 -c `grep -c processor /proc/cpuinfo`
-cd $DIR
 
+cd $DIR
 kill -15 \`ps -p \$\$ -o ppid=\` &> /dev/null
 rm -rf $DIR/sb-bench
 rm -rf ~/.sb-pid
 
-echo "Completed! View sb-output.log for stats..."
+echo "Completed! View $DIR/sb-output.log for stats..."
