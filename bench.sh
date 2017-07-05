@@ -136,10 +136,17 @@ echo "Start: `date`"
 echo "---"
 
 echo "Running dd I/O benchmark..."
-echo "dd 1Mx1k fdatasync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync`"
-echo "dd 64kx16k fdatasync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync`"
-echo "dd 1Mx1k dsync: `dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync`"
-echo "dd 64kx16k dsync: `dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync`"
+echo "dd 1Mx1k fdatasync:"
+dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync
+
+echo "dd 64kx16k fdatasync:"
+dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync
+
+echo "dd 1Mx1k dsync:"
+dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync
+
+echo dd 64kx16k dsync:"
+dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync
 
 rm -f sb-io-test
 
